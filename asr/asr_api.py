@@ -11,6 +11,7 @@
 import librosa
 import soundfile as sf
 import torch
+import yaml
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
@@ -23,18 +24,22 @@ from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 # Configurations #
 ##################
 
-# Define FastAPI app
-app = FastAPI()
+# Load configurations
+with open("config.yaml", "r") as file:
+    config = yaml.safe_load(file)
 
 # Load model and processor
-processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-960h")
-model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-960h").to("cpu")
+processor = Wav2Vec2Processor.from_pretrained(config["model"]["name"])
+model = Wav2Vec2ForCTC.from_pretrained(config["model"]["name"])
 
 # Set model in evaluation mode since we're only running inference
 model.eval()
 
 # Set sampling rate to 16kHz
-target_sr = 16000
+TARGET_SR = config["sampling_rate"]["target"]
+
+# Define FastAPI app
+app = FastAPI()
 
 #############
 # Functions #
@@ -67,12 +72,12 @@ async def transcribe_audio(file: UploadFile = File(...)) -> JSONResponse:
     data, sample_rate = sf.read(file.file, dtype="float32")
 
     # Check if resampling is needed
-    if sample_rate != target_sr:
-        data = librosa.resample(data, orig_sr=sample_rate, target_sr=target_sr)
+    if sample_rate != TARGET_SR:
+        data = librosa.resample(data, orig_sr=sample_rate, target_sr=TARGET_SR)
 
     # Prepare input
     input_values = processor(
-        data, return_tensors="pt", sampling_rate=target_sr
+        data, return_tensors="pt", sampling_rate=TARGET_SR
     ).input_values
 
     # Model inference
