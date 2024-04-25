@@ -10,6 +10,9 @@ __pycache__/
 *.slo
 .DS_Store
 
-# Audio files and Jupyter notebooks for testing
+# Audio files and AWS keys
 *.mp3
+*.pem
+
+# Jupyter notebooks for testing
 *.ipynb
