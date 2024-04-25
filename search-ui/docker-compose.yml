@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  search-ui:
+    image: node:16.13
+    container_name: search-ui
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    working_dir: /usr/src/app
+    environment:
+      - NODE_ENV=production
+      - ELASTICSEARCH_HOST=http://172.31.25.132:9200
+    ports:
+      - "3000:3000"
+    command: >
+      bash -c "
+      npm install &&
+      npm start
+      "
