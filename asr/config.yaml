@@ -9,6 +9,6 @@ api:
   ping_url: "http://localhost:8001/ping"
 
 paths:
-  data_dir: "common_voice"
-  output_dir: "asr"
+  data_dir: "../common_voice"
+  output_dir: "."
   csv_name: "cv-valid-dev.csv"

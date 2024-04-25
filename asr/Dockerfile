@@ -11,12 +11,11 @@ RUN apt-get update && apt-get install -y libsndfile1
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the codes last
-COPY asr/ asr/
-COPY config.yaml .
+# Copy the rest of the code
+COPY . .
 
 # Expose port
 EXPOSE 8001
 
 # Run main.py when the container launches
-CMD ["uvicorn", "asr.asr_api:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["uvicorn", "asr_api:app", "--host", "0.0.0.0", "--port", "8001"]

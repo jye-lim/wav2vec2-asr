@@ -74,7 +74,8 @@ def process_audio_files(df: pd.DataFrame, audio_folder: Path) -> pd.DataFrame:
         audio_path = audio_folder / row["filename"]
         if audio_path.exists():
             result = transcribe_audio(audio_path)
-            df.at[i, "generated_text"] = result["transcription"]
+            df.at[i, "generated_text"] = str(result["transcription"])
+            df.at[i, "duration"] = float(result["duration"])
 
         # Delete audio file when done
         audio_path.unlink()
@@ -98,8 +99,7 @@ def main():
     df_updated = process_audio_files(df, DATA_PATH)
 
     # Save updated CSV
-    updated_csv_name = CSV_NAME.replace(".csv", "_updated.csv")
-    updated_csv_path = OUTPUT_PATH / updated_csv_name
+    updated_csv_path = OUTPUT_PATH / CSV_NAME
     df_updated.to_csv(updated_csv_path, index=False)
 
 
